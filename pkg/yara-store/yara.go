@@ -46,6 +46,12 @@ func (c *CompilerState) ReadDir(dirpath string) error {
 	return err
 }
 
+func (c *CompilerState) ReadCompiled(filename string) error {
+	ruleset, err := yara.LoadRules(filename)
+	c.ruleset = ruleset
+	return err
+}
+
 func (c *CompilerState) MatchString(testString string) ([]yara.MatchRule, error) {
 	if c.ruleset == nil {
 		return nil, fmt.Errorf("Ruleset not compiled! Please use `.Compile()` before performing this operation")
