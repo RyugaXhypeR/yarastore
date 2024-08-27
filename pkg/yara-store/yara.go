@@ -1,6 +1,7 @@
 package yarastore
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/hillu/go-yara/v4"
@@ -8,12 +9,19 @@ import (
 
 type CompilerState struct {
 	compiler      *yara.Compiler
+	ruleset       *yara.Rules
 	ruleStorePath string
 }
 
 func NewCompilerState(ruleStorePath string) (*CompilerState, error) {
 	compiler, err := yara.NewCompiler()
-	return &CompilerState{compiler, ruleStorePath}, err
+	return &CompilerState{compiler, nil, ruleStorePath}, err
+}
+
+func (c *CompilerState) Compile() error {
+	ruleset, err := c.compiler.GetRules()
+	c.ruleset = ruleset
+	return err
 }
 
 func (c *CompilerState) ReadString(ruleString string) error {
@@ -39,40 +47,46 @@ func (c *CompilerState) ReadDir(dirpath string) error {
 }
 
 func (c *CompilerState) MatchString(testString string) ([]yara.MatchRule, error) {
-	rules, err := c.compiler.GetRules()
-	if err != nil {
-		return nil, err
+	if c.ruleset == nil {
+		return nil, fmt.Errorf("Ruleset not compiled! Please use `.Compile()` before performing this operation")
 	}
 
 	testBytes := []byte(testString)
 	var m yara.MatchRules
-	err = rules.ScanMem(testBytes, 0, 0, &m)
+	err := c.ruleset.ScanMem(testBytes, 0, 0, &m)
 	return m, err
 }
 
 func (c *CompilerState) MatchFile(filepath string) ([]yara.MatchRule, error) {
-	rules, err := c.compiler.GetRules()
-	if err != nil {
-		return nil, err
+	if c.ruleset == nil {
+		return nil, fmt.Errorf("Ruleset not compiled! Please use `.Compile()` before performing this operation")
 	}
 
 	var m yara.MatchRules
-	err = rules.ScanFile(filepath, 0, 0, &m)
+	err := c.ruleset.ScanFile(filepath, 0, 0, &m)
 	return m, err
 }
 
 func (c *CompilerState) MatchDir(dirpath string) ([]yara.MatchRule, error) {
-	rules, err := c.compiler.GetRules()
-	if err != nil {
-		return nil, err
+	if c.ruleset == nil {
+		return nil, fmt.Errorf("Ruleset not compiled! Please use `.Compile()` before performing this operation")
 	}
 
 	var m yara.MatchRules
 	files, err := ListDir(dirpath)
 	for _, filepath := range files {
-		if err = rules.ScanFile(filepath, 0, 0, &m); err != nil {
+		if err = c.ruleset.ScanFile(filepath, 0, 0, &m); err != nil {
 			return nil, err
 		}
 	}
 	return m, err
+}
+
+func (c *CompilerState) Save() error {
+	if c.ruleset == nil {
+		return fmt.Errorf("Ruleset not compiled! Please use `.Compile()` before performing this operation")
+	}
+
+	c.ruleset.Save(c.ruleStorePath)
+	return nil
 }
