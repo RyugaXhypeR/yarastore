@@ -36,8 +36,8 @@ func NewRuleMatch(filename string, matches yara.MatchRules) *RuleMatch {
 	return &RuleMatch{filename, matches}
 }
 
-// JsonSRuleMatch Serialized `RuleMatch` as json and return string.
-func JsonSRuleMatch(rules []RuleMatch) (string, error) {
+// RuleMatchAsJsonS Serialized `RuleMatch` as json and return string.
+func RuleMatchAsJsonS(rules []RuleMatch) (string, error) {
 	jsonBytes, err := json.Marshal(rules)
 	if err != nil {
 		return "", err
@@ -45,8 +45,8 @@ func JsonSRuleMatch(rules []RuleMatch) (string, error) {
 	return string(jsonBytes), err
 }
 
-// JsonRuleMatch Serialize `RuleMatch` and dump into a json file.
-func JsonRuleMatch(rules []RuleMatch, filename string) error {
+// RuleMatchAsJson Serialize `RuleMatch` and dump into a json file.
+func RuleMatchAsJson(rules []RuleMatch, filename string) error {
 	jsonBytes, err := json.Marshal(rules)
 	if err != nil {
 		return err
