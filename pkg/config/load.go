@@ -1,7 +1,6 @@
 package config
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
@@ -28,53 +27,25 @@ func LoadConfig(filename string) (*Config, error) {
 	return &config, err
 }
 
-func (c *ConfigValues) GetFilteredFiles() ([]string, error) {
-	var filteredFiles []string
-
-	predicate := func(path string, _ os.FileInfo) bool {
-		filename := filepath.Base(path)
-		if c.IncludePattern != "" {
-			match, err := filepath.Match(c.IncludePattern, filename)
-			if !match || err != nil {
-				return false
-			}
-		}
-
-		if c.ExcludePattern != "" {
-			match, err := filepath.Match(c.ExcludePattern, filename)
-			if match || err != nil {
-				return false
-			}
-		}
-
-		if utils.SliceContains(c.Exclude, filename) {
+func (c *ConfigValues) IsFilenameValid(path string) bool {
+	filename := filepath.Base(path)
+	if c.IncludePattern != "" {
+		match, err := filepath.Match(c.IncludePattern, filename)
+		if !match || err != nil {
 			return false
 		}
-
-		return true
 	}
 
-	for _, dir := range c.Dirs {
-		files, err := utils.ListDirWithPred(dir, predicate)
-		if err != nil {
-			return nil, err
-		}
-		filteredFiles = append(filteredFiles, files...)
-	}
-
-	for _, file := range c.Files {
-		if predicate(file, nil) {
-			filteredFiles = append(filteredFiles, file)
+	if c.ExcludePattern != "" {
+		match, err := filepath.Match(c.ExcludePattern, filename)
+		if match || err != nil {
+			return false
 		}
 	}
 
-	return filteredFiles, nil
-}
+	if utils.SliceContains(c.Exclude, filename) {
+		return false
+	}
 
-func (c *Config) GetRuleFiles() ([]string, error) {
-	return c.Rules.GetFilteredFiles()
-}
-
-func (c *Config) GetTargetFiles() ([]string, error) {
-	return c.Target.GetFilteredFiles()
+	return true
 }
