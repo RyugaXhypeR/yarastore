@@ -34,68 +34,26 @@ type Config struct {
 func LoadConfig(filename string) (*Config, error) {
 	var config Config
 	_, err := toml.DecodeFile(filename, &config)
-	if err != nil {
-		return nil, err
-	}
-	if err := config.Rules.makePathAbs(); err != nil {
-		return nil, err
-	}
-	if err := config.Target.makePathAbs(); err != nil {
-		return nil, err
-	}
-	return &config, nil
-}
-
-// makePathAbs Convert all patterns and exclude files to absolute paths
-// to make matching patterns easier.
-func (c *ConfigValues) makePathAbs() error {
-	// Convert all files in `Exclude` to absolute paths.
-	for i, file := range c.Exclude {
-		absPath, err := filepath.Abs(file)
-		if err != nil {
-			return err
-		}
-		c.Exclude[i] = absPath
-	}
-
-	if c.IncludePattern != "" {
-		absPath, err := filepath.Abs(c.IncludePattern)
-		if err != nil {
-			return err
-		}
-		c.IncludePattern = absPath
-	}
-
-	if c.ExcludePattern != "" {
-		absPath, err := filepath.Abs(c.ExcludePattern)
-		if err != nil {
-			return err
-		}
-		c.ExcludePattern = absPath
-	}
-
-	return nil
+	return &config, err
 }
 
 // IsFilenameValid A predicate which applies filters to check given `path` is valid.
 func (c *ConfigValues) IsFilenameValid(path string) bool {
+	filename := filepath.Base(path)
 	if c.IncludePattern != "" {
-		match, err := filepath.Match(c.IncludePattern, path)
+		match, err := filepath.Match(c.IncludePattern, filename)
 		if !match || err != nil {
 			return false
 		}
 	}
-
 	if c.ExcludePattern != "" {
-		match, err := filepath.Match(c.ExcludePattern, path)
+		match, err := filepath.Match(c.ExcludePattern, filename)
 		if match || err != nil {
 			return false
 		}
 	}
-
-	if utils.FileHasPrefix(c.Exclude, path) {
+	if utils.FileContains(c.Exclude, path) {
 		return false
 	}
-
 	return true
 }

@@ -20,9 +20,9 @@ func ListDirWithPred(dirname string, predicate func(string, os.FileInfo) bool) (
 	return files, err
 }
 
-func FileHasPrefix(prefixes []string, filepath string) bool {
-	for _, prefix := range prefixes {
-		if strings.HasPrefix(filepath, prefix) {
+func FileContains(excludeComponents []string, filepath string) bool {
+	for _, component := range excludeComponents {
+		if strings.Contains(filepath, component) {
 			return true
 		}
 	}
