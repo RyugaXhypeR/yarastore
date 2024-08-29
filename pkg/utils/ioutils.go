@@ -3,6 +3,7 @@ package utils
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func ListDirWithPred(dirname string, predicate func(string, os.FileInfo) bool) ([]string, error) {
@@ -19,9 +20,9 @@ func ListDirWithPred(dirname string, predicate func(string, os.FileInfo) bool) (
 	return files, err
 }
 
-func SliceContains(haystack []string, needle string) bool {
-	for _, straw := range haystack {
-		if straw == needle {
+func FileHasPrefix(prefixes []string, filepath string) bool {
+	for _, prefix := range prefixes {
+		if strings.HasPrefix(filepath, prefix) {
 			return true
 		}
 	}
