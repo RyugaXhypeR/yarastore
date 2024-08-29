@@ -5,13 +5,13 @@ import (
 	"path/filepath"
 )
 
-func ListDirWithExt(dirname string, extension string) ([]string, error) {
+func ListDirWithPred(dirname string, predicate func(string, os.FileInfo) bool) ([]string, error) {
 	var files []string
 	err := filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() && filepath.Ext(path) == extension {
+		if !info.IsDir() && predicate(path, info) {
 			files = append(files, path)
 		}
 		return nil
@@ -19,16 +19,11 @@ func ListDirWithExt(dirname string, extension string) ([]string, error) {
 	return files, err
 }
 
-func ListDir(dirname string) ([]string, error) {
-	var files []string
-	err := filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
+func SliceContains(haystack []string, needle string) bool {
+	for _, straw := range haystack {
+		if straw == needle {
+			return true
 		}
-		if !info.IsDir() {
-			files = append(files, path)
-		}
-		return nil
-	})
-	return files, err
+	}
+	return false
 }
