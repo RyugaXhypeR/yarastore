@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/hillu/go-yara/v4"
+
+    "yarastore/pkg/utils"
 )
 
 type CompilerState struct {
@@ -37,7 +39,7 @@ func (c *CompilerState) ReadFile(filepath string) error {
 }
 
 func (c *CompilerState) ReadDir(dirpath string) error {
-	files, err := ListDirWithExt(dirpath, ".yara")
+	files, err := utils.ListDirWithExt(dirpath, ".yara")
 	for _, file := range files {
 		if err := c.ReadFile(file); err != nil {
 			return err
@@ -79,7 +81,7 @@ func (c *CompilerState) MatchDir(dirpath string) ([]yara.MatchRule, error) {
 	}
 
 	var m yara.MatchRules
-	files, err := ListDir(dirpath)
+	files, err := utils.ListDir(dirpath)
 	for _, filepath := range files {
 		if err = c.ruleset.ScanFile(filepath, 0, 0, &m); err != nil {
 			return nil, err

@@ -1,4 +1,4 @@
-package yarastore
+package utils
 
 import (
 	"os"
