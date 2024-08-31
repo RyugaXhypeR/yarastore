@@ -8,17 +8,19 @@ import (
 	"yarastore/pkg/utils"
 )
 
-// ConfigValues Common configure options for `Rules` and `Target` files
+// ConfigValues Common configure options to decide the files and directories to scan.
 type ConfigValues struct {
-	// The directories to scan.
+	// The directories to consider for scan.
 	Dirs []string `toml:"dirs"`
-	// The files to scan.
+	// The files to consider for scan.
 	Files []string `toml:"files"`
-	// The files to exclude.
+	// The files and directories to exclude. Directories must be suffixed with `/`, e.g. `.git/`.
 	Exclude []string `toml:"exclude"`
 	// Consider files if they have this pattern.
+    // Note: Only works against the filename.
 	IncludePattern string `toml:"include_pattern"`
 	// Discard files if they have this pattern.
+    // Note: Only works against the filename.
 	ExcludePattern string `toml:"exclude_pattern"`
 }
 
@@ -52,6 +54,8 @@ func (c *ConfigValues) IsFilenameValid(path string) bool {
 			return false
 		}
 	}
+
+    // Checks if any component in `c.Exclude` is present in `path`.
 	if utils.FileContains(c.Exclude, path) {
 		return false
 	}

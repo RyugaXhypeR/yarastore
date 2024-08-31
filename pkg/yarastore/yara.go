@@ -22,8 +22,7 @@ type CompilerState struct {
 	ruleStorePath string
 }
 
-// RuleMatch A file-based match state which stores all yara matches
-// in a particular file.
+// RuleMatch A file-based match state which stores all yara matches in a particular file.
 type RuleMatch struct {
 	// File which rules were tested against.
 	Filename string
@@ -58,13 +57,13 @@ func RuleMatchAsJson(rules []RuleMatch, filename string) error {
 }
 
 // NewCompilerState Create a new `yara.Compiler` instance and set it.
-// Note: This function sets `ruleset` to `nil` by default
+// Note: This function sets `ruleset` to `nil` by default.
 func NewCompilerState(ruleStorePath string) (*CompilerState, error) {
 	compiler, err := yara.NewCompiler()
 	return &CompilerState{compiler, nil, ruleStorePath}, err
 }
 
-// Compile added rules and set the `ruleset` attribute
+// Compile added rules and set the `ruleset` attribute.
 func (c *CompilerState) Compile() error {
 	ruleset, err := c.compiler.GetRules()
 	c.ruleset = ruleset
@@ -90,7 +89,7 @@ func (c *CompilerState) ReadFile(filepath string) error {
 	return c.compiler.AddFile(file, file.Name())
 }
 
-// Read Compile files from `config.Config` rules
+// Read Compile files from `config.Config` rules.
 func (c *CompilerState) Read(conf *config.Config) error {
 	for _, dir := range conf.Rules.Dirs {
 		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -158,7 +157,7 @@ func (c *CompilerState) MatchFile(filepath string) (*RuleMatch, error) {
 	return ruleMatch, nil
 }
 
-// Match Apply compiled yara rules and find matches in files from `config.Config`
+// Match Apply compiled yara rules and find matches in files from `config.Config`.
 func (c *CompilerState) Match(conf *config.Config) ([]RuleMatch, error) {
 	if c.ruleset == nil {
 		return nil, fmt.Errorf("ruleset not compiled! Please use `.Compile()` before performing this operation")
