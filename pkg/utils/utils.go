@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"io"
+	"net/http"
 	"strings"
 )
 
@@ -13,4 +15,13 @@ func FileContains(excludeComponents []string, filepath string) bool {
 		}
 	}
 	return false
+}
+
+// FetchRemoteFile Download a file from a remote server
+func FetchRemoteFile(remoteURL string) ([]byte, error) {
+	response, err := http.Get(remoteURL)
+	if err != nil {
+		return nil, err
+	}
+	return io.ReadAll(response.Body)
 }
