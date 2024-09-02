@@ -97,7 +97,11 @@ func (c *CompilerState) Read(conf *config.Config) error {
 				return err
 			}
 
-			if !info.IsDir() && conf.Rules.IsFilenameValid(path) {
+			base := filepath.Base(path)
+			if info.IsDir() && conf.Rules.IsDirExcluded(base) {
+				return filepath.SkipDir
+			}
+			if !info.IsDir() && conf.Rules.IsFilenameValid(base) {
 				if err := c.ReadFile(path); err != nil {
 					return err
 				}
@@ -169,7 +173,12 @@ func (c *CompilerState) Match(conf *config.Config) ([]RuleMatch, error) {
 			if err != nil {
 				return err
 			}
-			if !info.IsDir() && conf.Target.IsFilenameValid(path) {
+
+            base := filepath.Base(path)
+            if info.IsDir() && conf.Target.IsDirExcluded(base) {
+                return filepath.SkipDir
+            }
+			if !info.IsDir() && conf.Target.IsFilenameValid(base) {
 				ruleMatch, err := c.MatchFile(path)
 				if err != nil {
 					return err
