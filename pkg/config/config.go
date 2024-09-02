@@ -4,8 +4,6 @@ import (
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
-
-	"yarastore/pkg/utils"
 )
 
 // ConfigValues Common configure options to decide the files and directories to scan.
@@ -17,11 +15,16 @@ type ConfigValues struct {
 	// The files and directories to exclude. Directories must be suffixed with `/`, e.g. `.git/`.
 	Exclude []string `toml:"exclude"`
 	// Consider files if they have this pattern.
-    // Note: Only works against the filename.
+	// Note: Only works against the filename.
 	IncludePattern string `toml:"include_pattern"`
 	// Discard files if they have this pattern.
-    // Note: Only works against the filename.
+	// Note: Only works against the filename.
 	ExcludePattern string `toml:"exclude_pattern"`
+
+	// Internal field for faster comparison of filenames
+	excludeFiles map[string]bool
+	// Internal field for faster comparison of directories
+	excludeDirs map[string]bool
 }
 
 // Config Toml config options for the app.
@@ -36,12 +39,15 @@ type Config struct {
 func LoadConfig(filename string) (*Config, error) {
 	var config Config
 	_, err := toml.DecodeFile(filename, &config)
+
+	config.Rules.makeExcludeMaps()
+	config.Target.makeExcludeMaps()
+
 	return &config, err
 }
 
 // IsFilenameValid A predicate which applies filters to check given `path` is valid.
-func (c *ConfigValues) IsFilenameValid(path string) bool {
-	filename := filepath.Base(path)
+func (c *ConfigValues) IsFilenameValid(filename string) bool {
 	if c.IncludePattern != "" {
 		match, err := filepath.Match(c.IncludePattern, filename)
 		if !match || err != nil {
@@ -55,9 +61,25 @@ func (c *ConfigValues) IsFilenameValid(path string) bool {
 		}
 	}
 
-    // Checks if any component in `c.Exclude` is present in `path`.
-	if utils.FileContains(c.Exclude, path) {
-		return false
+    // Valid if filename doesn't exist in `c.excludeFiles`
+	return !c.excludeFiles[filename]
+}
+
+// makeExcludeMaps Seperates directories and files from `c.Exclude` into `c.excludeDirs` and `c.excludeFiles`.`
+func (c *ConfigValues) makeExcludeMaps() {
+	c.excludeFiles = map[string]bool{}
+	c.excludeDirs = map[string]bool{}
+
+	for _, component := range c.Exclude {
+		if component[len(component)-1:] == "/" {
+            c.excludeDirs[component[:len(component)-1]] = true
+		} else {
+			c.excludeFiles[component] = true
+		}
 	}
-	return true
+}
+
+// IsDirExcluded Check if `dirname` is supposed to be excluded.
+func (c *ConfigValues) IsDirExcluded(dirname string) bool {
+	return c.excludeDirs[dirname]
 }
