@@ -89,8 +89,8 @@ func (c *CompilerState) ReadFile(filepath string) error {
 	return c.compiler.AddFile(file, file.Name())
 }
 
-// Read Compile files from `config.Config` rules.
-func (c *CompilerState) Read(conf *config.Config) error {
+// ReadConfig Compile files from `config.Config` rules.
+func (c *CompilerState) ReadConfig(conf *config.Config) error {
 	for _, dir := range conf.Rules.Dirs {
 		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
@@ -161,8 +161,8 @@ func (c *CompilerState) MatchFile(filepath string) (*RuleMatch, error) {
 	return ruleMatch, nil
 }
 
-// Match Apply compiled yara rules and find matches in files from `config.Config`.
-func (c *CompilerState) Match(conf *config.Config) ([]RuleMatch, error) {
+// MatchConfig Apply compiled yara rules and find matches in files from `config.Config`.
+func (c *CompilerState) MatchConfig(conf *config.Config) ([]RuleMatch, error) {
 	if c.ruleset == nil {
 		return nil, fmt.Errorf("ruleset not compiled! Please use `.Compile()` before performing this operation")
 	}
