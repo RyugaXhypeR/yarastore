@@ -18,8 +18,6 @@ type CompilerState struct {
 	// Compiled ruleset of add yara rules. By default,
 	// will be `nil` until rules are added and compiled.
 	ruleset *yara.Rules
-	// Path to store the compiled ruleset.
-	ruleStorePath string
 }
 
 // RuleMatch A file-based match state which stores all yara matches in a particular file.
@@ -58,9 +56,9 @@ func RuleMatchAsJson(rules []RuleMatch, filename string) error {
 
 // NewCompilerState Create a new `yara.Compiler` instance and set it.
 // Note: This function sets `ruleset` to `nil` by default.
-func NewCompilerState(ruleStorePath string) (*CompilerState, error) {
+func NewCompilerState() (*CompilerState, error) {
 	compiler, err := yara.NewCompiler()
-	return &CompilerState{compiler, nil, ruleStorePath}, err
+	return &CompilerState{compiler, nil}, err
 }
 
 // Compile added rules and set the `ruleset` attribute.
@@ -212,9 +210,9 @@ func (c *CompilerState) MatchConfig(conf *config.Config) ([]RuleMatch, error) {
 
 // Save the compiled rules in a file.
 // Note: `ruleset` must be compiled and set before matching.
-func (c *CompilerState) Save() error {
+func (c *CompilerState) Save(filepath string) error {
 	if c.ruleset == nil {
 		return fmt.Errorf("ruleset not compiled! Please use `.Compile()` before performing this operation")
 	}
-	return c.ruleset.Save(c.ruleStorePath)
+	return c.ruleset.Save(filepath)
 }
