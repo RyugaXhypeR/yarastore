@@ -20,6 +20,8 @@ type ConfigValues struct {
 	// Discard files if they have this pattern.
 	// Note: Only works against the filename.
 	ExcludePattern string `toml:"exclude_pattern"`
+	// Flag to match rules against files recursively
+	Recursive bool `toml:"recursive"`
 
 	// Internal field for faster comparison of filenames
 	excludeFiles map[string]bool
