@@ -63,7 +63,7 @@ func (c *ConfigValues) IsFilenameValid(filename string) bool {
 		}
 	}
 
-    // Valid if filename doesn't exist in `c.excludeFiles`
+	// Valid if filename doesn't exist in `c.excludeFiles`
 	return !c.excludeFiles[filename]
 }
 
@@ -74,7 +74,7 @@ func (c *ConfigValues) makeExcludeMaps() {
 
 	for _, component := range c.Exclude {
 		if component[len(component)-1:] == "/" {
-            c.excludeDirs[component[:len(component)-1]] = true
+			c.excludeDirs[component[:len(component)-1]] = true
 		} else {
 			c.excludeFiles[component] = true
 		}
