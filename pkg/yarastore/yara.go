@@ -96,9 +96,9 @@ func (c *CompilerState) ReadConfig(conf *config.Config) error {
 			}
 
 			base := filepath.Base(path)
-            if info.IsDir() && dir != path && !conf.Rules.Recursive {
-                return filepath.SkipDir
-            }
+			if info.IsDir() && dir != path && !conf.Rules.Recursive {
+				return filepath.SkipDir
+			}
 			if info.IsDir() && conf.Rules.IsDirExcluded(base) {
 				return filepath.SkipDir
 			}
@@ -175,13 +175,13 @@ func (c *CompilerState) MatchConfig(conf *config.Config) ([]RuleMatch, error) {
 				return err
 			}
 
-            base := filepath.Base(path)
-            if info.IsDir() && dir != path && !conf.Target.Recursive {
-                return filepath.SkipDir
-            }
-            if info.IsDir() && conf.Target.IsDirExcluded(base) {
-                return filepath.SkipDir
-            }
+			base := filepath.Base(path)
+			if info.IsDir() && dir != path && !conf.Target.Recursive {
+				return filepath.SkipDir
+			}
+			if info.IsDir() && conf.Target.IsDirExcluded(base) {
+				return filepath.SkipDir
+			}
 			if !info.IsDir() && conf.Target.IsFilenameValid(base) {
 				ruleMatch, err := c.MatchFile(path)
 				if err != nil {
