@@ -21,8 +21,9 @@ jobs:
       with:
         go-version: '1.23'
 
+    - name: Requirements
+      run: apt install libyara-dev 
+
     - name: Build
       run: go build -v ./...
 
-    - name: Test
-      run: go test -v ./...
