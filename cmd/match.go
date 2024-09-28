@@ -11,7 +11,7 @@ import (
 
 var matchCmd = &cobra.Command{
 	Use:   "match",
-	Short: "Match matchd ruleset against files",
+	Short: "Match compiled ruleset against files",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		compilerState, err := yarastore.NewCompilerState()
