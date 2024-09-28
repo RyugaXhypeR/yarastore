@@ -102,8 +102,8 @@ Example Usage
 
 .. code-block:: bash
 
-    ./yarastore compile --dirs "rules1/ rules2/" -r -o rules.yar
-    ./yarastore match rules.yar --dirs "target1/ target2/" -r -o report.json
+    ./yarastore compile --dirs "rules1/ rules2/" --output rules.yar --recursive
+    ./yarastore match rules.yar --dirs "target1/ target2/" -output report.json --recursive
 
 
 Future Plans
