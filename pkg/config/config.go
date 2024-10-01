@@ -32,9 +32,9 @@ type ConfigValues struct {
 // Config Toml config options for the app.
 type Config struct {
 	// ConfigValues for yara-rules.
-	Rules ConfigValues `toml:"rules"`
+	Rules ConfigValues `mapstructure:"rules"`
 	// ConfigValues for the files to match yara-rules against.
-	Target ConfigValues `toml:"target"`
+	Target ConfigValues `mapstructure:"target"`
 }
 
 // LoadConfig Load toml config from a file.
