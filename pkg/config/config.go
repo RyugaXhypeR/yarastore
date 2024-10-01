@@ -37,6 +37,12 @@ type Config struct {
 	Target ConfigValues `mapstructure:"target"`
 }
 
+// InitConfig initializes the exclude maps.
+func (config *Config) InitConfig() {
+	config.Rules.makeExcludeMaps()
+	config.Target.makeExcludeMaps()
+}
+
 // LoadConfig Load toml config from a file.
 func LoadConfig(filename string) (*Config, error) {
 	var config Config
