@@ -9,19 +9,19 @@ import (
 // ConfigValues Common configure options to decide the files and directories to scan.
 type ConfigValues struct {
 	// The directories to consider for scan.
-	Dirs []string `toml:"dirs"`
+	Dirs []string `mapstructure:"dirs"`
 	// The files to consider for scan.
-	Files []string `toml:"files"`
+	Files []string `mapstructure:"files"`
 	// The files and directories to exclude. Directories must be suffixed with `/`, e.g. `.git/`.
-	Exclude []string `toml:"exclude"`
+	Exclude []string `mapstructure:"exclude"`
 	// Consider files if they have this pattern.
 	// Note: Only works against the filename.
-	IncludePattern string `toml:"include_pattern"`
+	IncludePattern string `mapstructure:"include_pattern"`
 	// Discard files if they have this pattern.
 	// Note: Only works against the filename.
-	ExcludePattern string `toml:"exclude_pattern"`
+	ExcludePattern string `mapstructure:"exclude_pattern"`
 	// Flag to match rules against files recursively
-	Recursive bool `toml:"recursive"`
+	Recursive bool `mapstructure:"recursive"`
 
 	// Internal field for faster comparison of filenames
 	excludeFiles map[string]bool
