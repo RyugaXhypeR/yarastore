@@ -47,9 +47,7 @@ func (config *Config) InitConfig() {
 func LoadConfig(filename string) (*Config, error) {
 	var config Config
 	_, err := toml.DecodeFile(filename, &config)
-
-	config.Rules.makeExcludeMaps()
-	config.Target.makeExcludeMaps()
+    config.InitConfig();
 
 	return &config, err
 }

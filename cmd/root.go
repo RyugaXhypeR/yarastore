@@ -46,4 +46,6 @@ func initConfig() {
 	if err := viper.Unmarshal(&conf); err != nil {
 		log.Fatal("Error Unmarshaling: ", err)
 	}
+
+    conf.InitConfig();
 }
