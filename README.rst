@@ -1,6 +1,11 @@
 yarastore
 ==========
 
+.. image:: https://github.com/RyugaXhypeR/yarastore/actions/workflows/build.yml/badge.svg
+   :alt: Build Status
+   :target: https://github.com/RyugaXhypeR/yarastore/actions
+
+
 ``yarastore`` is a command-line tool for managing and compiling YARA rulesets. It allows users to
 collect, organize, and compile YARA rules from multiple sources into a single ruleset. The tool
 supports recursive file scanning, pattern matching, and exclusion rules to make the compilation
