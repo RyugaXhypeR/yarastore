@@ -17,10 +17,10 @@ jobs:
         with:
           go-version: '1.23'
 
-      - name: Install dependencies
+      - name: Install YARA dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y automake libtool make gcc pkg-config libssl-dev libjansson-dev
+          sudo apt-get install -y automake libtool make gcc pkg-config
 
       - name: Download YARA
         run: |
